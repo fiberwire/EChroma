@@ -3,5 +3,6 @@
 
         public int paths;
         public int pathProps;
+        public int randomLength;
     }
 }
