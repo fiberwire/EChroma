@@ -75,5 +75,8 @@ namespace EChroma.models {
 
             return sequence;
         }
+
+        public static Genome RandomGenome(int length, ChromaParameters parameters) => 
+            new Genome(RandomSequence(length), parameters);
     }
 }
