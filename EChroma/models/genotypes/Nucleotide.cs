@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EChroma.models {
+namespace EChroma.models.genotypes {
     public class Nucleotide {
         public double value;
         

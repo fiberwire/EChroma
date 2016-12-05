@@ -1,20 +1,22 @@
-﻿using System;
+﻿using EChroma.models.genotypes;
+using EChroma.models.phenotypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EChroma.models {
+namespace EChroma.models.genotypes {
     class Genome {
 
         public List<string> sequence;
         public List<Gene> genes;
         private ChromaParameters parameters;
 
-        public Genome(List<string> sequence, ChromaParameters parameters) {
-            this.sequence = sequence;
+        public Genome(string sequence, ChromaParameters parameters) {
+            this.sequence = sequence.chars();
             this.parameters = parameters;
-            genes = parseSequence(sequence, parameters);
+            genes = parseSequence(this.sequence, parameters);
         }
 
         List<Gene> parseSequence(List<string> sequence, ChromaParameters parameters) {
@@ -25,7 +27,7 @@ namespace EChroma.models {
 
         static List<Nucleotide> parseNucleotides(List<string> sequence, ChromaParameters parameters) {
             var nucleos = new List<Nucleotide>();
-            double numNucleos = parameters.paths * parameters.pathProps;
+            double numNucleos = parameters.paths * parameters.propsPerPath;
 
             var valuesPerNucleo = Math.Floor(sequence.Count / numNucleos);
             var leftOvers = sequence.Count - (valuesPerNucleo * numNucleos);
@@ -51,12 +53,14 @@ namespace EChroma.models {
             return nucleos;
         }
 
+        public Painting toPainting() => new Painting(genes, parameters);
+
         static List<Gene> parseGenes(List<Nucleotide> nucleos, ChromaParameters parameters) {
             var genes = new List<Gene>();
             var nucleoQ = nucleos.ToQueue();
             parameters.paths.times(p => { //for each path
                 var n = new List<Nucleotide>(); //to be passed to new Gene
-                for (int j = 0; j < parameters.pathProps; j++) {
+                for (int j = 0; j < parameters.propsPerPath; j++) {
                     n.Add(nucleoQ.Dequeue());
                 }
                 genes.Add(new Gene(n));
@@ -65,15 +69,18 @@ namespace EChroma.models {
             return genes;
         }
 
-        public static List<string> RandomSequence(int length) {
-            var sequence = new List<string>();
+        public static string RandomSequence(int length) {
+            var sequence = "";
             var letters = "abcdefghijklmnopqrstuvwxyz".chars();
 
             length.times(i => {
-                sequence.Add(letters.random());
+                sequence += letters.random();
             });
 
             return sequence;
         }
+
+        public static Genome RandomGenome(int length, ChromaParameters parameters) => 
+            new Genome(RandomSequence(length), parameters);
     }
 }
